@@ -80,7 +80,7 @@ def get_thresholds(v, n_groundTruth):
     return t
 
 
-def get_iou(gt, pred):
+def get_iou(gt, pred, union=True):
     gxmin, gymin, gxmax, gymax = gt['box']
     pxmin, pymin, pxmax, pymax = pred['box']
 
@@ -96,7 +96,10 @@ def get_iou(gt, pred):
     pvol = (pxmax - pxmin) * (pymax - pymin)
     ivol = iw * ih
 
-    iou = ivol / (gvol + pvol - ivol)
+    if union:
+        iou = ivol / (gvol + pvol - ivol)
+    else:
+        iou = ivol / pvol
     return iou
 
 
@@ -236,7 +239,7 @@ def compute_statistics(gts, preds, dontcare, ignore_gt, ignore_pred, compute_fp,
                     continue
                 if ignore_threshold[j]:
                     continue
-                iou = get_iou(preds[j], gts[i])
+                iou = get_iou(preds[j], gts[i], union=False)
                 if iou > MIN_OVERLAP[cls]:
                     assigned_detection[j] = True
                     n_stuff += 1
@@ -290,23 +293,24 @@ def eval_class(gt_list, pred_list, cls, diff):
     return  precisions, recalls
 
 
-def plot_and_compute(precisions,cls):
-    Xs = np.arange(0., 1., 1./len(precisions[0]))
+def plot_and_compute(precisions,cls, plot):
+    if plot:
+        Xs = np.arange(0., 1., 1./len(precisions[0]))
 
-    l_easy = plt.plot(Xs, precisions[0], c='green')[0]
-    l_moderate = plt.plot(Xs, precisions[1], c='blue')[0]
-    l_hard = plt.plot(Xs, precisions[2], c='red')[0]
+        l_easy = plt.plot(Xs, precisions[0], c='green')[0]
+        l_moderate = plt.plot(Xs, precisions[1], c='blue')[0]
+        l_hard = plt.plot(Xs, precisions[2], c='red')[0]
 
-    labels = ['Easy','Moderate','Hard']
-    plt.legend(handles=[l_easy,l_moderate,l_hard],labels=labels,loc='best')
-    plt.xlabel('Recall')
-    plt.ylabel('Precision')
-    plt.title(cls)
-    plt.ylim((0,1.0))
-    plt.grid()
-    plt.savefig('2d_result.png')
-    plt.show()
-    plt.close()
+        labels = ['Easy','Moderate','Hard']
+        plt.legend(handles=[l_easy,l_moderate,l_hard],labels=labels,loc='best')
+        plt.xlabel('Recall')
+        plt.ylabel('Precision')
+        plt.title(cls)
+        plt.ylim((0,1.0))
+        plt.grid()
+        plt.savefig('2d_result.png')
+        plt.show()
+        plt.close()
 
     val_easy, val_moderate, val_hard = 0., 0., 0.
     for i in range(0, N_SAMPLE_PTS,4):
@@ -349,13 +353,6 @@ def eval(gt_dir, pred_dir, cls):
 if __name__ == '__main__':
     gt_dir = '/Users/yangchenhongyi/Downloads/kitti_eval/eval_label/'
     pred_dir = '/Users/yangchenhongyi/Documents/TEMP/result'
-
-    if os.path.isdir(os.path.join(gt_dir, '.DS_Store')):
-        os.rmdir(os.path.join(gt_dir, '.DS_Store'))
-
-    if os.path.isdir(os.path.join(pred_dir, '.DS_Store')):
-        os.rmdir(os.path.join(pred_dir, '.DS_Store'))
-
     #Car,  Pedestrian, Cyclist
     cls = 'Car'
     eval(gt_dir, pred_dir, cls)
