@@ -21,5 +21,9 @@ python3, numpy, matplotlib
 
 ### Usage:
 
-Modify the paths in main, then run.
+Modify the paths in main, then run:
+
+```shell
+python3 eval.py
+```
 
