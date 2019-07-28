@@ -347,7 +347,7 @@ def eval(gt_dir, pred_dir, cls):
         precision_all_diff.append(precisions)
         recall_all_diff.append(recalls)
 
-    plot_and_compute(precision_all_diff, cls)
+    plot_and_compute(precision_all_diff, cls, plot=True)
 
 
 if __name__ == '__main__':
