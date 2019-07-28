@@ -1,5 +1,5 @@
 # KITTI_evaluation_for_2d_detection
-A python implementation of KITTI evaluation code for 2D detection task. The result may be slightly different from the C++ version (< 0.01). It's slower than the C++ version, but it's easy to use.
+A python implementation of KITTI evaluation code for 2D detection task. The result may be slightly different from the C++ version (< 0.01). It's slower than the C++ version, but it's easier to use.
 
 C++ Version:
 
